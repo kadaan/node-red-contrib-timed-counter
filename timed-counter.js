@@ -24,6 +24,7 @@ module.exports = function(RED) {
             return {
                 buffer: undefined,  // The last message to be received, so the final message to be posted (if we're withholding)
                 count: 0,           // Number of clicks in the current run
+                timestamp: undefined, // The timestamp of the first message to be received
                 timeout: undefined, // The current timeout handle
 
                 input: function (msg) {
@@ -33,6 +34,7 @@ module.exports = function(RED) {
                     // If the message has a 'reset' property, reset the timer and the count.
                     if (undefined !== msg['reset']) {
                         msg.count = handler.count = 0;
+                        msg.timestamp = handler.timestamp = undefined;
                         handler.buffer = undefined;
 
                         // Clear any running timer
@@ -55,6 +57,7 @@ module.exports = function(RED) {
                         if (undefined === handler.timeout) {
                             // Reset the count
                             msg.count = handler.count = 0;
+                            handler.timestamp = new Date().getTime();
                         }
                         else if (! node.fixedtimeout) {
                             // If fixedtimeout is false, then each time a message
@@ -73,6 +76,7 @@ module.exports = function(RED) {
                         handler.count ++;
                         // And store in the message
                         msg.count = handler.count;
+                        msg.duration = Math.abs(new Date() - handler.timestamp) / 1000;
 
                         if (undefined === handler.timeout) {
                             // Now, if the timeout is unset (as earlier) or
@@ -99,13 +103,12 @@ module.exports = function(RED) {
                     // count=0 and no timeout, or we'll have a real message
                     // with a count > 0 and there should be a timeout running.
 
-                    if ( node.withhold ) {
+                    if (node.withhold) {
                         // If withholding, store the most recently received
                         // message, and just send the last one when the timer
                         // finally expires.
                         handler.buffer = msg;
-                    }
-                    else {
+                    } else {
                         // If withhold is false, so send the messages tagged with
                         // the count immediately as normal: this node will not
                         // impede flow, but just tag the count value.

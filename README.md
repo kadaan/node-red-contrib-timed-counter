@@ -1,6 +1,12 @@
 node-red-contrib-timed-counter
 ==============================
 
+### Forked from [tomgidden/node-red-contrib-timed-counter](https://github.com/tomgidden/node-red-contrib-timed-counter).
+#### Changes
+1. When messages are posted they include number of seconds between the first message and the posted message in `msg.duration` 
+
+---
+
 A node that counts messages received in a specified time limit.
 
 This node counts incoming messages while they are received in a configured time limit. When the first message comes in, a countdown timer is started. When subsequent messages arrive within the time limit the counter is incremented, so the first message gets `msg.count == 1`, the next `msg.count == 2`, and so on. When the time limit is reached, the counter is reset.
