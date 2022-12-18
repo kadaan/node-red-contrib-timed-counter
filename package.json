@@ -1,5 +1,5 @@
 {
-   "name" : "node-red-contrib-timed-counter",
+   "name" : "@kadaan/node-red-timed-counter",
    "description" : "A Node-RED node that counts messages received in a specified time limit",
    "keywords" : [
       "node-red",
